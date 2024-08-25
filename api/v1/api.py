@@ -1,5 +1,6 @@
 import logging
 from fastapi import APIRouter, Depends, HTTPException
+from pymongo.errors import DuplicateKeyError
 from .endpoints import campaigns, users, contacts, companies, emails
 from config import settings
 from models.user import User
