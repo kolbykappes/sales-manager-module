@@ -86,4 +86,11 @@ yarn-error.log
 *.tmp
 *.temp
 .env
-".env" 
+*.local.env
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
