@@ -54,19 +54,28 @@ async def initialize_db():
         users = {}
         for user_data in data['users']:
             try:
-                user = User(
-                    email=user_data['email'],
-                    full_name=user_data['full_name'],
-                    is_active=user_data['is_active'],
-                    username=user_data['email'].split('@')[0]  # Using email prefix as username
-                )
-                user.set_password(user_data['password'])
-                user.save()
-                users[user.email] = user
-            except DuplicateKeyError as e:
-                logger.error(f"Duplicate email found: {user_data['email']}. Skipping user creation.")
+                existing_user = User.objects(email=user_data['email']).first()
+                if existing_user:
+                    logger.info(f"User with email {user_data['email']} already exists. Updating...")
+                    existing_user.full_name = user_data['full_name']
+                    existing_user.is_active = user_data['is_active']
+                    existing_user.set_password(user_data['password'])
+                    existing_user.save()
+                    users[existing_user.email] = existing_user
+                else:
+                    user = User(
+                        email=user_data['email'],
+                        full_name=user_data['full_name'],
+                        is_active=user_data['is_active'],
+                        username=user_data['email'].split('@')[0]  # Using email prefix as username
+                    )
+                    user.set_password(user_data['password'])
+                    user.save()
+                    users[user.email] = user
+            except Exception as e:
+                logger.error(f"Error creating/updating user {user_data['email']}: {str(e)}")
                 continue
-        logger.info(f"Created {len(users)} users")
+        logger.info(f"Created/Updated {len(users)} users")
         
         # Create companies
         companies = {}
@@ -75,19 +84,30 @@ async def initialize_db():
                 user = users.get(company_data['user_email'])
                 if not user:
                     logger.error(f"User with email {company_data['user_email']} not found")
-                    raise ValueError(f"User with email {company_data['user_email']} not found")
+                    continue
                 
-                company = Company(
-                    name=company_data['name'],
-                    website=company_data.get('website'),
-                    primary_industry=company_data.get('primary_industry'),
-                    primary_sub_industry=company_data.get('primary_sub_industry'),
-                    zoom_id=company_data['zoom_id'],
-                    user=user
-                )
-                company.save()
-                companies[company.name] = company
-            logger.info(f"Created {len(companies)} companies")
+                existing_company = Company.objects(name=company_data['name']).first()
+                if existing_company:
+                    logger.info(f"Company {company_data['name']} already exists. Updating...")
+                    existing_company.website = company_data.get('website')
+                    existing_company.primary_industry = company_data.get('primary_industry')
+                    existing_company.primary_sub_industry = company_data.get('primary_sub_industry')
+                    existing_company.zoom_id = company_data['zoom_id']
+                    existing_company.user = user
+                    existing_company.save()
+                    companies[existing_company.name] = existing_company
+                else:
+                    company = Company(
+                        name=company_data['name'],
+                        website=company_data.get('website'),
+                        primary_industry=company_data.get('primary_industry'),
+                        primary_sub_industry=company_data.get('primary_sub_industry'),
+                        zoom_id=company_data['zoom_id'],
+                        user=user
+                    )
+                    company.save()
+                    companies[company.name] = company
+            logger.info(f"Created/Updated {len(companies)} companies")
         else:
             logger.error("The 'companies' key is missing in the initialization data.")
             raise HTTPException(status_code=500, detail="Failed to initialize database: 'companies' key missing")
@@ -97,25 +117,33 @@ async def initialize_db():
         for contact_data in data['contacts']:
             user = users.get(contact_data['user_email'])
             company = companies.get(contact_data['company_name'])
-            if not user:
-                logger.error(f"User with email {contact_data['user_email']} not found")
-                raise ValueError(f"User with email {contact_data['user_email']} not found")
-            if not company:
-                logger.error(f"Company with name {contact_data['company_name']} not found")
-                raise ValueError(f"Company with name {contact_data['company_name']} not found")
+            if not user or not company:
+                logger.error(f"User or Company not found for contact: {contact_data['email']}")
+                continue
             
-            contact = Contact(
-                first_name=contact_data['first_name'],
-                last_name=contact_data['last_name'],
-                email=contact_data['email'],
-                title=contact_data.get('title'),
-                zoom_id=contact_data['zoom_id'],
-                user=user,
-                company=company
-            )
-            contact.save()
+            existing_contact = Contact.objects(email=contact_data['email']).first()
+            if existing_contact:
+                logger.info(f"Contact {contact_data['email']} already exists. Updating...")
+                existing_contact.first_name = contact_data['first_name']
+                existing_contact.last_name = contact_data['last_name']
+                existing_contact.title = contact_data.get('title')
+                existing_contact.zoom_id = contact_data['zoom_id']
+                existing_contact.user = user
+                existing_contact.company = company
+                existing_contact.save()
+            else:
+                contact = Contact(
+                    first_name=contact_data['first_name'],
+                    last_name=contact_data['last_name'],
+                    email=contact_data['email'],
+                    title=contact_data.get('title'),
+                    zoom_id=contact_data['zoom_id'],
+                    user=user,
+                    company=company
+                )
+                contact.save()
             contacts_count += 1
-        logger.info(f"Created {contacts_count} contacts")
+        logger.info(f"Created/Updated {contacts_count} contacts")
         
         # Create campaigns
         campaigns_count = 0
@@ -123,22 +151,36 @@ async def initialize_db():
             user = users.get(campaign_data['user_email'])
             if not user:
                 logger.error(f"User with email {campaign_data['user_email']} not found")
-                raise ValueError(f"User with email {campaign_data['user_email']} not found")
+                continue
             
-            campaign = Campaign(
-                campaign_name=campaign_data['campaign_name'],
-                campaign_context=campaign_data['campaign_context'],
-                campaign_template_body=campaign_data['campaign_template_body'],
-                campaign_template_title=campaign_data['campaign_template_title'],
-                user=user
-            )
-            campaign.save()
+            existing_campaign = Campaign.objects(campaign_name=campaign_data['campaign_name'], user=user).first()
+            if existing_campaign:
+                logger.info(f"Campaign {campaign_data['campaign_name']} already exists. Updating...")
+                existing_campaign.campaign_context = campaign_data['campaign_context']
+                existing_campaign.campaign_template_body = campaign_data['campaign_template_body']
+                existing_campaign.campaign_template_title = campaign_data['campaign_template_title']
+                existing_campaign.save()
+            else:
+                campaign = Campaign(
+                    campaign_name=campaign_data['campaign_name'],
+                    campaign_context=campaign_data['campaign_context'],
+                    campaign_template_body=campaign_data['campaign_template_body'],
+                    campaign_template_title=campaign_data['campaign_template_title'],
+                    user=user
+                )
+                campaign.save()
             campaigns_count += 1
-        logger.info(f"Created {campaigns_count} campaigns")
+        logger.info(f"Created/Updated {campaigns_count} campaigns")
         
         # Create emails
         emails_count = 0
         for contact in Contact.objects:
+            existing_email = Email.objects(contact__email=contact.email).first()
+            if existing_email:
+                logger.info(f"Email for contact {contact.email} already exists. Skipping...")
+                emails_count += 1
+                continue
+            
             email = Email(
                 company={
                     "name": contact.company.name,

@@ -13,6 +13,44 @@
       "is_active": true
     }
   ],
+  "companies": [
+    {
+      "name": "Tech Solutions Inc.",
+      "website": "https://techsolutions.com",
+      "primary_industry": "Technology",
+      "primary_sub_industry": "Software Development",
+      "zoom_id": "tech123",
+      "user_email": "john@example.com"
+    },
+    {
+      "name": "Green Energy Co.",
+      "website": "https://greenenergy.com",
+      "primary_industry": "Energy",
+      "primary_sub_industry": "Renewable Energy",
+      "zoom_id": "green456",
+      "user_email": "jane@example.com"
+    }
+  ],
+  "contacts": [
+    {
+      "first_name": "Alice",
+      "last_name": "Johnson",
+      "email": "alice@techsolutions.com",
+      "title": "CTO",
+      "zoom_id": "alice789",
+      "user_email": "john@example.com",
+      "company_name": "Tech Solutions Inc."
+    },
+    {
+      "first_name": "Bob",
+      "last_name": "Smith",
+      "email": "bob@greenenergy.com",
+      "title": "CEO",
+      "zoom_id": "bob101",
+      "user_email": "jane@example.com",
+      "company_name": "Green Energy Co."
+    }
+  ],
   "campaigns": [
     {
       "campaign_name": "Summer Sale 2024",
