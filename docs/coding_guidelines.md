@@ -8,4 +8,8 @@ Welcome to the Sales Manager Project Coding Guidelines. To maintain a well-organ
 
 Please refer to these specific files for detailed guidelines in each area of development.
 
+## Development Environment
+
+This project is developed on a Windows environment. When providing commands or scripts, please ensure they are compatible with Windows systems. For example, use Windows command prompt or PowerShell syntax instead of Unix-like commands.
+
 Remember to balance between code quality, performance, and development speed when making implementation decisions. Regularly review and update these guidelines as the project evolves.
