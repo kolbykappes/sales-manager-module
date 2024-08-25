@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
-from models.campaign import Campaign, CampaignCreate, CampaignResponse
+from models.campaign import Campaign, CampaignCreate, CampaignResponse, CampaignUpdate
 from pydantic import TypeAdapter
 from typing import List
 from mongoengine.errors import ValidationError, DoesNotExist
@@ -30,4 +30,24 @@ async def read_campaign(campaign_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-# Add more endpoints as needed
+@router.put("/{campaign_id}", response_model=CampaignResponse)
+async def update_campaign(campaign_id: str, campaign_update: CampaignUpdate):
+    try:
+        campaign = Campaign.objects.get(campaign_id=campaign_id)
+        for key, value in campaign_update.model_dump(exclude_unset=True).items():
+            setattr(campaign, key, value)
+        campaign.save()
+        return CampaignResponse.from_mongo(campaign)
+    except DoesNotExist:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/{campaign_id}", response_model=dict)
+async def delete_campaign(campaign_id: str):
+    try:
+        campaign = Campaign.objects.get(campaign_id=campaign_id)
+        campaign.delete()
+        return {"message": "Campaign deleted successfully"}
+    except DoesNotExist:
+        raise HTTPException(status_code=404, detail="Campaign not found")
