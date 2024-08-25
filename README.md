@@ -1,7 +1,7 @@
-# FastAPI MongoDB Project
+# Sales Manager API
 
 ## Overview
-This project is a FastAPI-based web application that integrates with MongoDB. It provides a RESTful API for managing various resources, including campaigns, companies, contacts, emails, and users.
+The Sales Manager API is a FastAPI-based web application that integrates with MongoDB. It provides a RESTful API for managing various resources, including campaigns, companies, contacts, emails, and users.
 
 ## Features
 - FastAPI framework for high-performance API development
@@ -9,6 +9,7 @@ This project is a FastAPI-based web application that integrates with MongoDB. It
 - JWT-based authentication
 - CORS middleware for cross-origin resource sharing
 - Environment variable configuration using python-dotenv
+- Pydantic settings management
 
 ## Prerequisites
 - Python 3.7+
@@ -39,6 +40,19 @@ This project is a FastAPI-based web application that integrates with MongoDB. It
    MONGODB_URI=<your-mongodb-uri>
    SECRET_KEY=<your-secret-key>
    ```
+
+## Configuration
+
+The project uses a `config.py` file to manage settings. You can modify the following settings:
+
+- `PROJECT_NAME`: Name of the project
+- `PROJECT_VERSION`: Version of the project
+- `API_V1_STR`: API version 1 prefix
+- `MONGODB_URI`: MongoDB connection string
+- `SECRET_KEY`: Secret key for JWT encoding/decoding
+- `ALGORITHM`: Algorithm used for JWT
+- `ACCESS_TOKEN_EXPIRE_MINUTES`: Expiration time for access tokens
+- `ALLOWED_HOSTS`: List of allowed hosts for CORS
 
 ## Running the Application
 
