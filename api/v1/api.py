@@ -38,6 +38,8 @@ async def initialize_db():
         with open(settings.SAMPLE_DATA_FILE, 'r') as file:
             data = json.load(file)
         
+        # Create users
+        users = {}
         for user_data in data['users']:
             user = User(
                 email=user_data['email'],
@@ -47,9 +49,49 @@ async def initialize_db():
             )
             user.set_password(user_data['password'])
             user.save()
+            users[user.email] = user
         
+        # Create companies
+        companies = {}
+        for company_data in data['companies']:
+            user = users.get(company_data['user_email'])
+            if not user:
+                raise ValueError(f"User with email {company_data['user_email']} not found")
+            
+            company = Company(
+                name=company_data['name'],
+                website=company_data.get('website'),
+                primary_industry=company_data.get('primary_industry'),
+                primary_sub_industry=company_data.get('primary_sub_industry'),
+                zoom_id=company_data['zoom_id'],
+                user=user
+            )
+            company.save()
+            companies[company.name] = company
+        
+        # Create contacts
+        for contact_data in data['contacts']:
+            user = users.get(contact_data['user_email'])
+            company = companies.get(contact_data['company_name'])
+            if not user:
+                raise ValueError(f"User with email {contact_data['user_email']} not found")
+            if not company:
+                raise ValueError(f"Company with name {contact_data['company_name']} not found")
+            
+            contact = Contact(
+                first_name=contact_data['first_name'],
+                last_name=contact_data['last_name'],
+                email=contact_data['email'],
+                title=contact_data.get('title'),
+                zoom_id=contact_data['zoom_id'],
+                user=user,
+                company=company
+            )
+            contact.save()
+        
+        # Create campaigns
         for campaign_data in data['campaigns']:
-            user = User.objects(email=campaign_data['user_email']).first()
+            user = users.get(campaign_data['user_email'])
             if not user:
                 raise ValueError(f"User with email {campaign_data['user_email']} not found")
             
