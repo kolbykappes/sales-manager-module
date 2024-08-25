@@ -4,6 +4,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatSidenavModule,
     MatListModule,
     MatToolbarModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule
   ],
   template: `
     <mat-sidenav-container>
@@ -30,6 +32,30 @@ import { MatIconModule } from '@angular/material/icon';
           <a mat-list-item routerLink="/campaigns" routerLinkActive="active">
             <mat-icon>campaign</mat-icon> Campaigns
           </a>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>description</mat-icon> Docs
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-nav-list>
+              <a mat-list-item href="/docs" target="_blank">
+                <mat-icon>api</mat-icon> API (Swagger)
+              </a>
+              <a mat-list-item routerLink="/docs/coding-guidelines" routerLinkActive="active">
+                <mat-icon>code</mat-icon> Coding Guidelines
+              </a>
+              <a mat-list-item routerLink="/docs/general-guidelines" routerLinkActive="active">
+                <mat-icon>list_alt</mat-icon> General Guidelines
+              </a>
+              <a mat-list-item routerLink="/docs/backend-guidelines" routerLinkActive="active">
+                <mat-icon>storage</mat-icon> Backend Guidelines
+              </a>
+              <a mat-list-item routerLink="/docs/frontend-guidelines" routerLinkActive="active">
+                <mat-icon>web</mat-icon> Frontend Guidelines
+              </a>
+            </mat-nav-list>
+          </mat-expansion-panel>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
