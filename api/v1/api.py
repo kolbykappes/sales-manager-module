@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from .endpoints import campaigns, users, contacts, companies
+from .endpoints import campaigns, users, contacts, companies, emails
 from config import settings
 from models.user import User
 from models.campaign import Campaign
@@ -11,6 +11,7 @@ api_router.include_router(campaigns.router, prefix="/campaigns", tags=["campaign
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(contacts.router, prefix="/contacts", tags=["contacts"])
 api_router.include_router(companies.router, prefix="/companies", tags=["companies"])
+api_router.include_router(emails.router, prefix="/emails", tags=["emails"])
 
 @api_router.post("/reset-project", tags=["admin"])
 async def reset_project():
