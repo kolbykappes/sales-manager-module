@@ -48,11 +48,22 @@ The project uses a `config.py` file to manage settings. You can modify the follo
 - `PROJECT_NAME`: Name of the project
 - `PROJECT_VERSION`: Version of the project
 - `API_V1_STR`: API version 1 prefix
-- `MONGODB_URI`: MongoDB connection string
+- `MONGODB_URI`: MongoDB Atlas connection string
+- `DATABASE_NAME`: Name of the MongoDB database
 - `SECRET_KEY`: Secret key for JWT encoding/decoding
 - `ALGORITHM`: Algorithm used for JWT
 - `ACCESS_TOKEN_EXPIRE_MINUTES`: Expiration time for access tokens
 - `ALLOWED_HOSTS`: List of allowed hosts for CORS
+
+## MongoDB Atlas Setup
+
+1. Create a MongoDB Atlas account if you don't have one.
+2. Set up a new cluster and obtain the connection string.
+3. In your `.env` file, set the `MONGODB_URI` to your Atlas connection string:
+   ```
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/<dbname>?retryWrites=true&w=majority
+   DATABASE_NAME=your_database_name
+   ```
 
 ## Running the Application
 
@@ -63,6 +74,8 @@ python main.py
 ```
 
 The API will be available at `http://localhost:8000`.
+
+Note: Ensure that your IP address is whitelisted in the MongoDB Atlas network access settings.
 
 ## API Documentation
 

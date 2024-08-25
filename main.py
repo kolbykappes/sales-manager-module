@@ -1,8 +1,13 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from mongoengine import connect
+from mongoengine import connect, ConnectionError
 from api.v1.api import api_router
 from config import settings
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
 
@@ -16,7 +21,12 @@ app.add_middleware(
 )
 
 # MongoDB connection
-connect(host=settings.MONGODB_URI)
+try:
+    connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
+    logger.info("Successfully connected to MongoDB")
+except ConnectionError:
+    logger.error("Failed to connect to MongoDB")
+    raise
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
