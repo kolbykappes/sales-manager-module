@@ -108,6 +108,29 @@ async def initialize_db():
             )
             campaign.save()
         
+        # Create emails
+        for contact in Contact.objects:
+            email = Email(
+                company={
+                    "name": contact.company.name,
+                    "zoom_id": contact.company.zoom_id
+                },
+                contact={
+                    "first_name": contact.first_name,
+                    "last_name": contact.last_name,
+                    "email": contact.email
+                },
+                subject=f"Sample Email for {contact.first_name}",
+                body=f"This is a sample email body for {contact.first_name} {contact.last_name} from {contact.company.name}.",
+                ai_model="GPT-3.5",
+                tokens_sent=100,
+                tokens_returned=150,
+                generation_time=0.5,
+                campaign_id=Campaign.objects.first().id,
+                full_prompt="This is a sample full prompt for email generation."
+            )
+            email.save()
+        
         return {"message": "Database initialized with sample data"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to initialize database: {str(e)}")
