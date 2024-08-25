@@ -25,9 +25,24 @@ app.add_middleware(
 try:
     connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
     logger.info("Successfully connected to MongoDB")
-except ConnectionFailure:
-    logger.error("Failed to connect to MongoDB")
-    raise
+
+    # Log the collections in the database
+    from mongoengine.connection import get_db
+    db = get_db()
+    collections = db.list_collection_names()
+    logger.info(f"Available collections: {collections}")
+
+    # Check if 'companies' collection exists
+    if 'companies' not in collections:
+        logger.error("The 'companies' collection does not exist in the database.")
+        raise HTTPException(status_code=500, detail="Failed to initialize database: 'companies'")
+
+except ConnectionFailure as e:
+    logger.error(f"Failed to connect to MongoDB: {str(e)}")
+    raise HTTPException(status_code=500, detail="Failed to connect to MongoDB")
+except Exception as e:
+    logger.error(f"Unexpected error during database initialization: {str(e)}")
+    raise HTTPException(status_code=500, detail=f"Failed to initialize database: {str(e)}")
 
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
