@@ -23,8 +23,8 @@ class UserResponse(BaseModel):
     user_id: str
     email: EmailStr
     username: str
-    first_name: str
-    last_name: str
+    first_name: str = ""
+    last_name: str = ""
 
 @router.post("/", response_model=UserResponse)
 async def create_user(user: UserCreate):
@@ -66,11 +66,11 @@ async def read_users():
     users = User.objects()
     return [
         UserResponse(
-            user_id=str(user.user_id),
+            user_id=str(user.id),  # Assuming 'id' is the correct field name
             email=user.email,
             username=user.username,
-            first_name=user.first_name,
-            last_name=user.last_name
+            first_name=user.first_name if hasattr(user, 'first_name') else "",
+            last_name=user.last_name if hasattr(user, 'last_name') else ""
         ) for user in users
     ]
 
