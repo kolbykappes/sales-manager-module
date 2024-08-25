@@ -1,7 +1,7 @@
-# Sales Manager API
+# Sales Manager Project
 
 ## Overview
-The Sales Manager API is a FastAPI-based web application that integrates with MongoDB. It provides a RESTful API for managing various resources, including campaigns, companies, contacts, emails, and users.
+The Sales Manager Project consists of a FastAPI-based backend API and an Angular frontend. The backend provides a RESTful API for managing various resources, including campaigns, companies, contacts, emails, and users, while the frontend offers a user-friendly interface for interacting with these resources.
 
 ## Features
 - FastAPI framework for high-performance API development
@@ -67,15 +67,29 @@ The project uses a `config.py` file to manage settings. You can modify the follo
 
 ## Running the Application
 
-To run the application, use the following command:
+### Backend
+
+To run the backend application, use the following command:
 
 ```
+cd backend
 python main.py
 ```
 
 The API will be available at `http://localhost:8000`.
 
 Note: Ensure that your IP address is whitelisted in the MongoDB Atlas network access settings.
+
+### Frontend
+
+To run the frontend application, use the following commands:
+
+```
+cd frontend/sales-manager-ui
+ng serve
+```
+
+The Angular app will be available at `http://localhost:4200`.
 
 ## API Documentation
 
