@@ -16,8 +16,10 @@ class Settings(BaseSettings):
     ALLOWED_HOSTS: list = ["*"]
     SAMPLE_DATA_FILE: str = os.getenv("SAMPLE_DATA_FILE", "sample_data.json")
     
-    # Aider and AI model settings
-    AIDER_MODEL: str = os.getenv("AIDER_MODEL", "openrouter/anthropic/claude-3-sonnet-20240229")
+    # AI model settings
+    DEFAULT_AI_MODEL: str = os.getenv("DEFAULT_AI_MODEL", "openrouter/anthropic/claude-3-sonnet-20240229")
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
+    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY")
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY")
 
     class Config:
