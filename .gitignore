@@ -84,3 +84,4 @@ yarn-error.log
 *.bak
 *.tmp
 *.temp
+".env" 
