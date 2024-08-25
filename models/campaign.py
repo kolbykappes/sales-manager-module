@@ -1,7 +1,7 @@
 from mongoengine import Document, IntField, StringField, DateTimeField, ReferenceField
 from datetime import datetime
 from .user import User
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 class Campaign(Document):
@@ -34,5 +34,4 @@ class CampaignResponse(BaseModel):
     updated_at: datetime
     user: str  # This will be the user_id
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
