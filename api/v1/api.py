@@ -5,6 +5,7 @@ from models.user import User
 from models.campaign import Campaign
 from models.company import Company
 from models.contact import Contact
+from models.email import Email
 import json
 from mongoengine import connect, disconnect
 
