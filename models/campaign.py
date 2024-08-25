@@ -34,7 +34,14 @@ class CampaignResponse(BaseModel):
     updated_at: datetime
     user: str  # This will be the user_id
 
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True, arbitrary_types_allowed=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={
+            datetime: lambda v: v.isoformat()
+        }
+    )
 
     @classmethod
     def from_mongo(cls, campaign: Campaign):

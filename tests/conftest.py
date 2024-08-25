@@ -19,9 +19,8 @@ def client():
     connect('mongoenginetest', mongo_client_class=mongomock.MongoClient)
     
     # Create a test client using the FastAPI app
-    test_client = TestClient(app, transport=ASGITransport(app=app))
-    
-    yield test_client
+    with TestClient(app) as test_client:
+        yield test_client
     
     # Tear down
     disconnect()
