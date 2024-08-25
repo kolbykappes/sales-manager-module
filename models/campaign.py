@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, DateTimeField, ReferenceField
-from datetime import datetime
+from datetime import datetime, timezone
 from .user import User
 from pydantic import BaseModel, Field
 from pydantic.config import ConfigDict
@@ -11,8 +11,8 @@ class Campaign(Document):
     campaign_context = StringField(required=True)
     campaign_template_body = StringField(required=True)
     campaign_template_title = StringField(required=True, max_length=200)
-    created_at = DateTimeField(default=datetime.utcnow)
-    updated_at = DateTimeField(default=datetime.utcnow)
+    created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
+    updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     user = ReferenceField(User, required=True)
 
     meta = {'collection': 'campaigns'}
@@ -34,7 +34,7 @@ class CampaignResponse(BaseModel):
     updated_at: datetime
     user: str  # This will be the user_id
 
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, arbitrary_types_allowed=True)
 
     @classmethod
     def from_mongo(cls, campaign: Campaign):

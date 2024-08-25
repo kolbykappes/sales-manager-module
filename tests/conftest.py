@@ -2,6 +2,7 @@ import pytest
 import sys
 import os
 from fastapi.testclient import TestClient
+from httpx import ASGITransport
 from mongoengine import connect, disconnect
 import mongomock
 
@@ -18,7 +19,7 @@ def client():
     connect('mongoenginetest', mongo_client_class=mongomock.MongoClient)
     
     # Create a test client using the FastAPI app
-    test_client = TestClient(app)
+    test_client = TestClient(app, transport=ASGITransport(app=app))
     
     yield test_client
     
