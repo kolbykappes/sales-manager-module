@@ -50,6 +50,13 @@ async def initialize_db():
         with open(settings.SAMPLE_DATA_FILE, 'r') as file:
             data = json.load(file)
         
+        # Initialize counters
+        users_count = 0
+        companies_count = 0
+        contacts_count = 0
+        campaigns_count = 0
+        emails_count = 0
+        
         # Create users
         users = {}
         for user_data in data['users']:
@@ -74,10 +81,11 @@ async def initialize_db():
                     user.set_password(user_data['password'])
                     user.save()
                     users[user.email] = user
+                users_count += 1
             except Exception as e:
                 logger.error(f"Error creating/updating user {user_data['email']}: {str(e)}")
-                continue
-        logger.info(f"Created/Updated {len(users)} users")
+                raise HTTPException(status_code=500, detail=f"Failed to create/update user {user_data['email']}: {str(e)}")
+        logger.info(f"Created/Updated {users_count} users")
         
         # Create companies
         companies = {}
@@ -85,8 +93,9 @@ async def initialize_db():
             for company_data in data['companies']:
                 user = users.get(company_data['user_email'])
                 if not user:
-                    logger.error(f"User with email {company_data['user_email']} not found")
-                    continue
+                    error_msg = f"User with email {company_data['user_email']} not found"
+                    logger.error(error_msg)
+                    raise HTTPException(status_code=500, detail=error_msg)
                 
                 existing_company = Company.objects(name=company_data['name']).first()
                 if existing_company:
@@ -109,19 +118,21 @@ async def initialize_db():
                     )
                     company.save()
                     companies[company.name] = company
-            logger.info(f"Created/Updated {len(companies)} companies")
+                companies_count += 1
+            logger.info(f"Created/Updated {companies_count} companies")
         else:
-            logger.error("The 'companies' key is missing in the initialization data.")
-            raise HTTPException(status_code=500, detail="Failed to initialize database: 'companies' key missing")
+            error_msg = "The 'companies' key is missing in the initialization data."
+            logger.error(error_msg)
+            raise HTTPException(status_code=500, detail=error_msg)
         
         # Create contacts
-        contacts_count = 0
         for contact_data in data['contacts']:
             user = users.get(contact_data['user_email'])
             company = companies.get(contact_data['company_name'])
             if not user or not company:
-                logger.error(f"User or Company not found for contact: {contact_data['email']}")
-                continue
+                error_msg = f"User or Company not found for contact: {contact_data['email']}"
+                logger.error(error_msg)
+                raise HTTPException(status_code=500, detail=error_msg)
             
             existing_contact = Contact.objects(email=contact_data['email']).first()
             if existing_contact:
@@ -148,12 +159,12 @@ async def initialize_db():
         logger.info(f"Created/Updated {contacts_count} contacts")
         
         # Create campaigns
-        campaigns_count = 0
         for campaign_data in data['campaigns']:
             user = users.get(campaign_data['user_email'])
             if not user:
-                logger.error(f"User with email {campaign_data['user_email']} not found")
-                continue
+                error_msg = f"User with email {campaign_data['user_email']} not found"
+                logger.error(error_msg)
+                raise HTTPException(status_code=500, detail=error_msg)
             
             existing_campaign = Campaign.objects(campaign_name=campaign_data['campaign_name'], user=user).first()
             if existing_campaign:
@@ -175,7 +186,6 @@ async def initialize_db():
         logger.info(f"Created/Updated {campaigns_count} campaigns")
         
         # Create emails
-        emails_count = 0
         for contact in Contact.objects:
             existing_email = Email.objects(contact__email=contact.email).first()
             if existing_email:
@@ -207,7 +217,17 @@ async def initialize_db():
         logger.info(f"Created {emails_count} emails")
         
         logger.info("Database initialization completed successfully")
-        return {"message": "Database initialized with sample data"}
+        return {
+            "message": "Database initialized with sample data",
+            "users_created": users_count,
+            "companies_created": companies_count,
+            "contacts_created": contacts_count,
+            "campaigns_created": campaigns_count,
+            "emails_created": emails_count
+        }
+    except HTTPException as he:
+        # Re-raise HTTP exceptions
+        raise he
     except Exception as e:
         logger.error(f"Failed to initialize database: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to initialize database: {str(e)}")
