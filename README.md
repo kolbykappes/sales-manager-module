@@ -84,6 +84,18 @@ Once the application is running, you can access the interactive API documentatio
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
+## Health Check
+
+The application includes a health check endpoint to verify the database connection:
+
+```
+GET /health
+```
+
+This endpoint returns:
+- `{"status": "healthy", "database": "connected"}` if the database is connected
+- A 503 error if the database is not available
+
 ## Project Structure
 
 - `main.py`: The main entry point of the application

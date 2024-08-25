@@ -1,7 +1,7 @@
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from mongoengine import connect, ConnectionError
+from mongoengine import connect, ConnectionError, DoesNotExist
 from api.v1.api import api_router
 from config import settings
 
@@ -34,6 +34,18 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/")
 async def root():
     return {"message": f"Welcome to the {settings.PROJECT_NAME}"}
+
+@app.get("/health")
+async def health_check():
+    try:
+        # Attempt to make a simple query to check the database connection
+        from mongoengine.connection import get_db
+        db = get_db()
+        db.command('ping')
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail="Database is not available")
 
 if __name__ == "__main__":
     import uvicorn
