@@ -47,7 +47,17 @@ async def initialize_db():
             user.save()
         
         for campaign_data in data['campaigns']:
-            campaign = Campaign(**campaign_data)
+            user = User.objects(email=campaign_data['user_email']).first()
+            if not user:
+                raise ValueError(f"User with email {campaign_data['user_email']} not found")
+            
+            campaign = Campaign(
+                campaign_name=campaign_data['campaign_name'],
+                campaign_context=campaign_data['campaign_context'],
+                campaign_template_body=campaign_data['campaign_template_body'],
+                campaign_template_title=campaign_data['campaign_template_title'],
+                user=user
+            )
             campaign.save()
         
         return {"message": "Database initialized with sample data"}

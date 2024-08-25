@@ -15,20 +15,18 @@
   ],
   "campaigns": [
     {
-      "name": "Summer Sale 2024",
-      "description": "Promotional campaign for summer products",
-      "start_date": "2024-06-01",
-      "end_date": "2024-08-31",
-      "budget": 10000,
-      "status": "planned"
+      "campaign_name": "Summer Sale 2024",
+      "campaign_context": "Promotional campaign for summer products",
+      "campaign_template_body": "Don't miss our amazing summer deals!",
+      "campaign_template_title": "Summer Sale 2024 - Hot Deals Inside!",
+      "user_email": "john@example.com"
     },
     {
-      "name": "New Product Launch",
-      "description": "Campaign for launching our new product line",
-      "start_date": "2024-09-15",
-      "end_date": "2024-12-15",
-      "budget": 25000,
-      "status": "draft"
+      "campaign_name": "New Product Launch",
+      "campaign_context": "Campaign for launching our new product line",
+      "campaign_template_body": "Introducing our revolutionary new product...",
+      "campaign_template_title": "Exciting New Product Launch!",
+      "user_email": "jane@example.com"
     }
   ]
 }
