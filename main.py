@@ -32,11 +32,11 @@ except ConnectionFailure:
 # Include API router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-# Add admin endpoints directly to the app
+# Include admin endpoints in the API router
 from api.v1.api import reset_project, initialize_db
 
-app.post("/api/v1/reset-project", tags=["admin"])(reset_project)
-app.post("/api/v1/initialize-db", tags=["admin"])(initialize_db)
+api_router.post("/reset-project", tags=["admin"])(reset_project)
+api_router.post("/initialize-db", tags=["admin"])(initialize_db)
 
 @app.get("/")
 async def root():
