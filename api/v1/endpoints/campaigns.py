@@ -1,25 +1,30 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from models.campaign import Campaign, CampaignCreate, CampaignResponse
 from typing import List
+from mongoengine.errors import ValidationError, DoesNotExist
 
 router = APIRouter()
 
 @router.get("/", response_model=List[CampaignResponse])
-async def read_campaigns():
-    campaigns = Campaign.objects.all()
+async def read_campaigns(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=100)):
+    campaigns = Campaign.objects.skip(skip).limit(limit)
     return [CampaignResponse(**campaign.to_mongo().to_dict()) for campaign in campaigns]
 
 @router.post("/", response_model=CampaignResponse)
 async def create_campaign(campaign: CampaignCreate):
-    new_campaign = Campaign(**campaign.dict())
-    new_campaign.save()
-    return CampaignResponse(**new_campaign.to_mongo().to_dict())
+    try:
+        new_campaign = Campaign(**campaign.dict())
+        new_campaign.save()
+        return CampaignResponse(**new_campaign.to_mongo().to_dict())
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/{campaign_id}", response_model=CampaignResponse)
-async def read_campaign(campaign_id: int):
-    campaign = Campaign.objects(campaign_id=campaign_id).first()
-    if campaign is None:
+async def read_campaign(campaign_id: str):
+    try:
+        campaign = Campaign.objects.get(campaign_id=campaign_id)
+        return CampaignResponse(**campaign.to_mongo().to_dict())
+    except DoesNotExist:
         raise HTTPException(status_code=404, detail="Campaign not found")
-    return CampaignResponse(**campaign.to_mongo().to_dict())
 
 # Add more endpoints as needed

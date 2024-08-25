@@ -1,11 +1,11 @@
-from mongoengine import Document, IntField, StringField, DateTimeField, ReferenceField
+from mongoengine import Document, StringField, DateTimeField, ReferenceField
 from datetime import datetime
 from .user import User
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional
+import uuid
 
 class Campaign(Document):
-    campaign_id = IntField(required=True, unique=True)
+    campaign_id = StringField(primary_key=True, default=lambda: str(uuid.uuid4()))
     campaign_name = StringField(required=True, max_length=200)
     campaign_context = StringField(required=True)
     campaign_template_body = StringField(required=True)
@@ -17,7 +17,6 @@ class Campaign(Document):
     meta = {'collection': 'campaigns'}
 
 class CampaignCreate(BaseModel):
-    campaign_id: int
     campaign_name: str = Field(..., max_length=200)
     campaign_context: str
     campaign_template_body: str
@@ -25,7 +24,7 @@ class CampaignCreate(BaseModel):
     user: str  # This will be the user_id
 
 class CampaignResponse(BaseModel):
-    campaign_id: int
+    campaign_id: str
     campaign_name: str
     campaign_context: str
     campaign_template_body: str
