@@ -1,22 +1,25 @@
-from fastapi import APIRouter, HTTPException, Depends
-from models.campaign import Campaign
+from fastapi import APIRouter, HTTPException
+from models.campaign import Campaign, CampaignCreate, CampaignResponse
 from typing import List
 
 router = APIRouter()
 
-@router.get("/", response_model=List[Campaign])
+@router.get("/", response_model=List[CampaignResponse])
 async def read_campaigns():
-    return list(Campaign.objects.all())
+    campaigns = Campaign.objects.all()
+    return [CampaignResponse(**campaign.to_mongo().to_dict()) for campaign in campaigns]
 
-@router.post("/", response_model=Campaign)
-async def create_campaign(campaign: Campaign):
-    return campaign.save()
+@router.post("/", response_model=CampaignResponse)
+async def create_campaign(campaign: CampaignCreate):
+    new_campaign = Campaign(**campaign.dict())
+    new_campaign.save()
+    return CampaignResponse(**new_campaign.to_mongo().to_dict())
 
-@router.get("/{campaign_id}", response_model=Campaign)
+@router.get("/{campaign_id}", response_model=CampaignResponse)
 async def read_campaign(campaign_id: int):
     campaign = Campaign.objects(campaign_id=campaign_id).first()
     if campaign is None:
         raise HTTPException(status_code=404, detail="Campaign not found")
-    return campaign
+    return CampaignResponse(**campaign.to_mongo().to_dict())
 
 # Add more endpoints as needed

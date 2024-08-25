@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from mongoengine import connect
 from dotenv import load_dotenv
 import os
+from api.v1.api import api_router
+from config import settings
 
 load_dotenv()
 
-app = FastAPI(title="Sales Manager API", version="1.0.0")
+app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
 
 # CORS middleware
 app.add_middleware(
@@ -18,11 +20,14 @@ app.add_middleware(
 )
 
 # MongoDB connection
-connect(host=os.getenv("MONGODB_URI"))
+connect(host=settings.MONGODB_URI)
+
+# Include API router
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Sales Manager API"}
+    return {"message": f"Welcome to the {settings.PROJECT_NAME}"}
 
 if __name__ == "__main__":
     import uvicorn
