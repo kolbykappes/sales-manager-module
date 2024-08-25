@@ -3,6 +3,8 @@ from .endpoints import campaigns, users, contacts, companies, emails
 from config import settings
 from models.user import User
 from models.campaign import Campaign
+from models.company import Company
+from models.contact import Contact
 import json
 from mongoengine import connect, disconnect
 
