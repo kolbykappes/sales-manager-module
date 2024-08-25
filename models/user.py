@@ -12,7 +12,8 @@ class User(Document):
     email = StringField(required=True, unique=True)
     user_id = StringField(primary_key=True, default=lambda: str(uuid.uuid4()))
     username = StringField(required=True, unique=True)
-    full_name = StringField(required=True)
+    first_name = StringField(required=True)
+    last_name = StringField(required=True)
     password_hash = StringField(required=True)
     is_active = BooleanField(default=True)
     last_login = DateTimeField()
@@ -46,7 +47,8 @@ class UserCreate(BaseModel):
     """
     email: EmailStr
     username: str
-    full_name: str
+    first_name: str
+    last_name: str
     password: str
 
 class UserResponse(BaseModel):
@@ -56,7 +58,8 @@ class UserResponse(BaseModel):
     user_id: str
     email: EmailStr
     username: str
-    full_name: str
+    first_name: str
+    last_name: str
     is_active: bool
     last_login: datetime | None
 
@@ -84,7 +87,8 @@ class UserResponse(BaseModel):
             user_id=str(user.user_id),
             email=user.email,
             username=user.username,
-            full_name=user.full_name,
+            first_name=user.first_name,
+            last_name=user.last_name,
             is_active=user.is_active,
             last_login=user.last_login
         )
@@ -95,6 +99,7 @@ class UserUpdate(BaseModel):
     """
     email: EmailStr | None = None
     username: str | None = None
-    full_name: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
     password: str | None = None
     is_active: bool | None = None
