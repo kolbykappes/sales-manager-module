@@ -15,6 +15,7 @@ class Email(Document):
     generation_time = FloatField(required=True)
     full_prompt = StringField(required=True)
     created_at = DateTimeField(default=datetime.utcnow)
+    campaign_id = StringField(required=True)
 
     meta = {'collection': 'emails'}
 
@@ -28,6 +29,7 @@ class EmailCreate(BaseModel):
     tokens_returned: int
     generation_time: float
     full_prompt: str
+    campaign_id: str
 
 class EmailResponse(BaseModel):
     id: str
@@ -41,6 +43,7 @@ class EmailResponse(BaseModel):
     generation_time: float
     full_prompt: str
     created_at: datetime
+    campaign_id: str
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -64,11 +67,12 @@ class EmailResponse(BaseModel):
             tokens_returned=email.tokens_returned,
             generation_time=email.generation_time,
             full_prompt=email.full_prompt,
-            created_at=email.created_at
+            created_at=email.created_at,
+            campaign_id=email.campaign_id
         )
 
 class EmailUpdate(BaseModel):
     subject: str | None = None
     body: str | None = None
     ai_model: str | None = None
-    campaign_id = StringField(required=True)  
+    campaign_id: str | None = None
