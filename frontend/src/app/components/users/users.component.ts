@@ -63,6 +63,7 @@ export class UsersComponent implements OnInit {
       next: (users) => {
         this.users = users;
         this.loading = false;
+        console.log('Users loaded successfully:', users);
       },
       error: (error) => {
         console.error('Error fetching users:', error);
@@ -70,7 +71,8 @@ export class UsersComponent implements OnInit {
           console.log('Redirect location:', error.headers.get('Location'));
         }
         this.loading = false;
-        // TODO: Display an error message to the user
+        // Display an error message to the user
+        alert('An error occurred while fetching users. Please try again later.');
       }
     });
   }

@@ -24,11 +24,16 @@ export class UserService {
   getUsers(): Observable<User[]> {
     console.log('Fetching users from:', this.apiUrl);
     return this.http.get<User[]>(this.apiUrl, { 
-      observe: 'response'
+      observe: 'response',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      })
     }).pipe(
       tap(response => {
         console.log('Response status:', response.status);
         console.log('Response headers:', response.headers);
+        console.log('Response body:', response.body);
       }),
       map(response => response.body as User[])
     );
