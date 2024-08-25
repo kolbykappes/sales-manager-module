@@ -58,6 +58,8 @@ async def initialize_db():
                 if existing_user:
                     logger.info(f"User with email {user_data['email']} already exists. Updating...")
                     existing_user.is_active = user_data['is_active']
+                    existing_user.first_name = user_data['first_name']
+                    existing_user.last_name = user_data['last_name']
                     existing_user.set_password(user_data['password'])
                     existing_user.save()
                     users[existing_user.email] = existing_user
@@ -65,7 +67,9 @@ async def initialize_db():
                     user = User(
                         email=user_data['email'],
                         is_active=user_data['is_active'],
-                        username=user_data['email'].split('@')[0]  # Using email prefix as username
+                        username=user_data['email'].split('@')[0],  # Using email prefix as username
+                        first_name=user_data['first_name'],
+                        last_name=user_data['last_name']
                     )
                     user.set_password(user_data['password'])
                     user.save()
