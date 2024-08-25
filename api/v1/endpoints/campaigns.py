@@ -27,5 +27,7 @@ async def read_campaign(campaign_id: str):
         return TypeAdapter(CampaignResponse).validate_python(campaign.to_mongo().to_dict())
     except DoesNotExist:
         raise HTTPException(status_code=404, detail="Campaign not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 # Add more endpoints as needed
