@@ -66,7 +66,11 @@ export class UsersComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching users:', error);
+        if (error.status === 307) {
+          console.log('Redirect location:', error.headers.get('Location'));
+        }
         this.loading = false;
+        // TODO: Display an error message to the user
       }
     });
   }
