@@ -59,7 +59,14 @@ async def read_user(user_id: str):
 @router.get("/", response_model=List[UserResponse])
 async def read_users():
     users = User.objects()
-    return [UserResponse.from_mongo(user) for user in users]
+    return [UserResponse(
+        user_id=str(user.user_id),
+        email=user.email,
+        username=user.username,
+        first_name=user.first_name if hasattr(user, 'first_name') else "",
+        last_name=user.last_name if hasattr(user, 'last_name') else "",
+        is_active=user.is_active
+    ) for user in users]
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(user_id: str, user: UserUpdate):
@@ -69,15 +76,17 @@ async def update_user(user_id: str, user: UserUpdate):
     
     update_data = user.dict(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(db_user, key, value)
+        if hasattr(db_user, key):
+            setattr(db_user, key, value)
     
     db_user.save()
     return UserResponse(
         user_id=str(db_user.user_id),
         email=db_user.email,
         username=db_user.username,
-        first_name=db_user.first_name,
-        last_name=db_user.last_name
+        first_name=db_user.first_name if hasattr(db_user, 'first_name') else "",
+        last_name=db_user.last_name if hasattr(db_user, 'last_name') else "",
+        is_active=db_user.is_active
     )
 
 @router.delete("/{user_id}", response_model=dict)
