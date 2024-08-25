@@ -23,8 +23,9 @@ class UserResponse(BaseModel):
     user_id: str
     email: EmailStr
     username: str
-    first_name: str = ""
-    last_name: str = ""
+    first_name: str
+    last_name: str
+    is_active: bool
 
 @router.post("/", response_model=UserResponse)
 async def create_user(user: UserCreate):
@@ -40,13 +41,7 @@ async def create_user(user: UserCreate):
     )
     new_user.set_password(user.password)
     new_user.save()
-    return UserResponse(
-        user_id=str(new_user.user_id),
-        email=new_user.email,
-        username=new_user.username,
-        first_name=new_user.first_name,
-        last_name=new_user.last_name
-    )
+    return UserResponse.from_mongo(new_user)
 
 @router.get("/{user_id}", response_model=UserResponse)
 async def read_user(user_id: str):
@@ -64,15 +59,7 @@ async def read_user(user_id: str):
 @router.get("/", response_model=List[UserResponse])
 async def read_users():
     users = User.objects()
-    return [
-        UserResponse(
-            user_id=str(user.id),  # Assuming 'id' is the correct field name
-            email=user.email,
-            username=user.username,
-            first_name=user.first_name if hasattr(user, 'first_name') else "",
-            last_name=user.last_name if hasattr(user, 'last_name') else ""
-        ) for user in users
-    ]
+    return [UserResponse.from_mongo(user) for user in users]
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(user_id: str, user: UserUpdate):

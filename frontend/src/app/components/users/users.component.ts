@@ -22,15 +22,15 @@ import { UserService, User } from '../../services/user.service';
         <th mat-header-cell *matHeaderCellDef>Email</th>
         <td mat-cell *matCellDef="let user">{{user.email}}</td>
       </ng-container>
-      <ng-container matColumnDef="firstName">
+      <ng-container matColumnDef="first_name">
         <th mat-header-cell *matHeaderCellDef>First Name</th>
         <td mat-cell *matCellDef="let user">{{user.first_name}}</td>
       </ng-container>
-      <ng-container matColumnDef="lastName">
+      <ng-container matColumnDef="last_name">
         <th mat-header-cell *matHeaderCellDef>Last Name</th>
         <td mat-cell *matCellDef="let user">{{user.last_name}}</td>
       </ng-container>
-      <ng-container matColumnDef="isActive">
+      <ng-container matColumnDef="is_active">
         <th mat-header-cell *matHeaderCellDef>Active</th>
         <td mat-cell *matCellDef="let user">{{user.is_active ? 'Yes' : 'No'}}</td>
       </ng-container>
@@ -53,7 +53,7 @@ import { UserService, User } from '../../services/user.service';
 })
 export class UsersComponent implements OnInit {
   users: User[] = [];
-  displayedColumns: string[] = ['username', 'email', 'firstName', 'lastName', 'isActive'];
+  displayedColumns: string[] = ['username', 'email', 'first_name', 'last_name', 'is_active'];
   loading = true;
 
   constructor(private userService: UserService) {}
