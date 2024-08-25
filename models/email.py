@@ -13,7 +13,7 @@ class Email(Document):
     tokens_sent = IntField(required=True)
     tokens_returned = IntField(required=True)
     generation_time = FloatField(required=True)
-    campaign_id = IntField(required=True)
+    campaign_id = StringField(required=True)
     full_prompt = StringField(required=True)
     created_at = DateTimeField(default=datetime.utcnow)
 
@@ -28,7 +28,7 @@ class EmailCreate(BaseModel):
     tokens_sent: int
     tokens_returned: int
     generation_time: float
-    campaign_id: int
+    campaign_id: str
     full_prompt: str
 
 class EmailResponse(BaseModel):
