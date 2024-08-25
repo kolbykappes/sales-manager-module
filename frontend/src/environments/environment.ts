@@ -1,7 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000/api/v1',
-  withCredentials: true
+  apiUrl: 'http://localhost:8000/api/v1'
 };
 
 // If you're using HTTPS or a different port, adjust accordingly:

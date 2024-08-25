@@ -24,7 +24,6 @@ export class UserService {
   getUsers(): Observable<User[]> {
     console.log('Fetching users from:', this.apiUrl);
     return this.http.get<User[]>(this.apiUrl, { 
-      withCredentials: environment.withCredentials,
       observe: 'response'
     }).pipe(
       tap(response => {
