@@ -57,7 +57,6 @@ async def initialize_db():
                 existing_user = User.objects(email=user_data['email']).first()
                 if existing_user:
                     logger.info(f"User with email {user_data['email']} already exists. Updating...")
-                    existing_user.full_name = user_data['full_name']
                     existing_user.is_active = user_data['is_active']
                     existing_user.set_password(user_data['password'])
                     existing_user.save()
@@ -65,7 +64,6 @@ async def initialize_db():
                 else:
                     user = User(
                         email=user_data['email'],
-                        full_name=user_data['full_name'],
                         is_active=user_data['is_active'],
                         username=user_data['email'].split('@')[0]  # Using email prefix as username
                     )
