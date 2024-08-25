@@ -52,36 +52,44 @@ async def initialize_db():
         # Create users
         users = {}
         for user_data in data['users']:
-            user = User(
-                email=user_data['email'],
-                full_name=user_data['full_name'],
-                is_active=user_data['is_active'],
-                username=user_data['email'].split('@')[0]  # Using email prefix as username
-            )
-            user.set_password(user_data['password'])
-            user.save()
-            users[user.email] = user
+            try:
+                user = User(
+                    email=user_data['email'],
+                    full_name=user_data['full_name'],
+                    is_active=user_data['is_active'],
+                    username=user_data['email'].split('@')[0]  # Using email prefix as username
+                )
+                user.set_password(user_data['password'])
+                user.save()
+                users[user.email] = user
+            except DuplicateKeyError as e:
+                logger.error(f"Duplicate email found: {user_data['email']}. Skipping user creation.")
+                continue
         logger.info(f"Created {len(users)} users")
         
         # Create companies
         companies = {}
-        for company_data in data['companies']:
-            user = users.get(company_data['user_email'])
-            if not user:
-                logger.error(f"User with email {company_data['user_email']} not found")
-                raise ValueError(f"User with email {company_data['user_email']} not found")
-            
-            company = Company(
-                name=company_data['name'],
-                website=company_data.get('website'),
-                primary_industry=company_data.get('primary_industry'),
-                primary_sub_industry=company_data.get('primary_sub_industry'),
-                zoom_id=company_data['zoom_id'],
-                user=user
-            )
-            company.save()
-            companies[company.name] = company
-        logger.info(f"Created {len(companies)} companies")
+        if 'companies' in data:
+            for company_data in data['companies']:
+                user = users.get(company_data['user_email'])
+                if not user:
+                    logger.error(f"User with email {company_data['user_email']} not found")
+                    raise ValueError(f"User with email {company_data['user_email']} not found")
+                
+                company = Company(
+                    name=company_data['name'],
+                    website=company_data.get('website'),
+                    primary_industry=company_data.get('primary_industry'),
+                    primary_sub_industry=company_data.get('primary_sub_industry'),
+                    zoom_id=company_data['zoom_id'],
+                    user=user
+                )
+                company.save()
+                companies[company.name] = company
+            logger.info(f"Created {len(companies)} companies")
+        else:
+            logger.error("The 'companies' key is missing in the initialization data.")
+            raise HTTPException(status_code=500, detail="Failed to initialize database: 'companies' key missing")
         
         # Create contacts
         contacts_count = 0
