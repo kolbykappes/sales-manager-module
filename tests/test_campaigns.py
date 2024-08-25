@@ -4,7 +4,7 @@ from models.user import User
 
 def test_create_campaign(client):
     # Create a test user
-    user = User(username="testuser", email="test@example.com", password="testpassword")
+    user = User(username="testuser", email="test@example.com", first_name="Test", last_name="User")
     user.set_password("testpassword")
     user.save()
 
@@ -32,7 +32,7 @@ def test_create_campaign(client):
 
 def test_get_campaigns(client):
     # Create a test user
-    user = User(username="testuser", email="test@example.com")
+    user = User(username="testuser", email="test@example.com", first_name="Test", last_name="User")
     user.set_password("testpassword")
     user.save()
 
@@ -60,7 +60,7 @@ def test_get_campaigns(client):
 
 def test_get_campaign(client):
     # Create a test user
-    user = User(username="testuser", email="test@example.com")
+    user = User(username="testuser", email="test@example.com", first_name="Test", last_name="User")
     user.set_password("testpassword")
     user.save()
 
