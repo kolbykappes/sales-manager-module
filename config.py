@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALLOWED_HOSTS: list = ["*"]
     SAMPLE_DATA_FILE: str = os.getenv("SAMPLE_DATA_FILE", "sample_data.json")
+    
+    # Aider and AI model settings
+    AIDER_MODEL: str = os.getenv("AIDER_MODEL", "openrouter/anthropic/claude-3-sonnet-20240229")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY")
 
     class Config:
         case_sensitive = True
