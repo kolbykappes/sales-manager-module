@@ -3,6 +3,7 @@ import sys
 import os
 from fastapi.testclient import TestClient
 from mongoengine import connect, disconnect
+import mongomock
 
 # Add the project root directory to the Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -14,7 +15,7 @@ from main import app
 def client():
     # Set up
     disconnect()
-    connect('mongoenginetest', host='mongomock://localhost')
+    connect('mongoenginetest', mongo_client_class=mongomock.MongoClient)
     
     # Create a test client using the FastAPI app
     test_client = TestClient(app)
