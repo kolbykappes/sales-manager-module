@@ -1,27 +1,109 @@
-# SalesManagerUi
+# Sales Manager Project
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.0.
+## Overview
+The Sales Manager Project consists of a FastAPI-based backend API and an Angular frontend. The backend provides a RESTful API for managing various resources, including campaigns, companies, contacts, emails, and users, while the frontend offers a user-friendly interface for interacting with these resources.
 
-## Development server
+## Backend Features
+- FastAPI framework for high-performance API development
+- MongoDB integration using MongoEngine ODM
+- JWT-based authentication
+- CORS middleware for cross-origin resource sharing
+- Environment variable configuration using python-dotenv
+- Pydantic settings management
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Frontend Features
+- Angular framework for building dynamic web applications
+- Modular architecture for scalability and maintainability
+- Integration with backend API using HttpClient
+- Reactive forms for user input handling
+- Angular Material for consistent UI components
 
-## Code scaffolding
+## Prerequisites
+- Python 3.7+
+- MongoDB
+- Node.js and npm
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Installation
 
-## Build
+### Backend
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd <project-directory>
+   ```
 
-## Running unit tests
+2. Create and activate a virtual environment:
+   ```
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+   ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+3. Install the required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
-## Running end-to-end tests
+4. Set up environment variables:
+   Create a `.env` file in the project root and add the following variables:
+   ```
+   MONGODB_URI=<your-mongodb-uri>
+   SECRET_KEY=<your-secret-key>
+   ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Frontend
 
-## Further help
+1. Navigate to the frontend directory:
+   ```
+   cd frontend/sales-manager-ui
+   ```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+## Running the Application
+
+### Backend
+
+To run the backend application, use the following command:
+
+```
+python main.py
+```
+
+The API will be available at `http://localhost:8000`.
+
+### Frontend
+
+To run the frontend application, use the following command:
+
+```
+ng serve
+```
+
+The Angular app will be available at `http://localhost:4200`.
+
+## API Documentation
+
+Once the backend is running, you can access the interactive API documentation at:
+
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## Project Structure
+
+- `main.py`: The main entry point of the backend application
+- `config.py`: Configuration settings for the project
+- `api/v1/`: API version 1 routes and endpoints
+- `models/`: MongoDB document models
+- `frontend/sales-manager-ui/`: Angular frontend application
+
+## Contributing
+
+Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
