@@ -33,6 +33,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+*.local.env
 
 # IDEs and Editors
 .vscode/
@@ -84,4 +85,4 @@ yarn-error.log
 *.bak
 *.tmp
 *.temp
-".env" 
+.env
