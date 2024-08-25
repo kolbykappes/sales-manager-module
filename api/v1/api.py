@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException
 from .endpoints import campaigns, users, contacts, companies, emails
 from config import settings
@@ -8,6 +9,11 @@ from models.contact import Contact
 from models.email import Email
 import json
 from mongoengine import connect, disconnect
+
+# Configure logging
+logging.basicConfig(filename='app.log', level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 api_router = APIRouter()
 api_router.include_router(campaigns.router, prefix="/campaigns", tags=["campaigns"])
@@ -38,6 +44,7 @@ async def reset_project():
 
 @api_router.post("/initialize-db", tags=["admin"])
 async def initialize_db():
+    logger.info("Starting database initialization")
     try:
         with open(settings.SAMPLE_DATA_FILE, 'r') as file:
             data = json.load(file)
@@ -54,12 +61,14 @@ async def initialize_db():
             user.set_password(user_data['password'])
             user.save()
             users[user.email] = user
+        logger.info(f"Created {len(users)} users")
         
         # Create companies
         companies = {}
         for company_data in data['companies']:
             user = users.get(company_data['user_email'])
             if not user:
+                logger.error(f"User with email {company_data['user_email']} not found")
                 raise ValueError(f"User with email {company_data['user_email']} not found")
             
             company = Company(
@@ -72,14 +81,18 @@ async def initialize_db():
             )
             company.save()
             companies[company.name] = company
+        logger.info(f"Created {len(companies)} companies")
         
         # Create contacts
+        contacts_count = 0
         for contact_data in data['contacts']:
             user = users.get(contact_data['user_email'])
             company = companies.get(contact_data['company_name'])
             if not user:
+                logger.error(f"User with email {contact_data['user_email']} not found")
                 raise ValueError(f"User with email {contact_data['user_email']} not found")
             if not company:
+                logger.error(f"Company with name {contact_data['company_name']} not found")
                 raise ValueError(f"Company with name {contact_data['company_name']} not found")
             
             contact = Contact(
@@ -92,11 +105,15 @@ async def initialize_db():
                 company=company
             )
             contact.save()
+            contacts_count += 1
+        logger.info(f"Created {contacts_count} contacts")
         
         # Create campaigns
+        campaigns_count = 0
         for campaign_data in data['campaigns']:
             user = users.get(campaign_data['user_email'])
             if not user:
+                logger.error(f"User with email {campaign_data['user_email']} not found")
                 raise ValueError(f"User with email {campaign_data['user_email']} not found")
             
             campaign = Campaign(
@@ -107,8 +124,11 @@ async def initialize_db():
                 user=user
             )
             campaign.save()
+            campaigns_count += 1
+        logger.info(f"Created {campaigns_count} campaigns")
         
         # Create emails
+        emails_count = 0
         for contact in Contact.objects:
             email = Email(
                 company={
@@ -130,9 +150,36 @@ async def initialize_db():
                 full_prompt="This is a sample full prompt for email generation."
             )
             email.save()
+            emails_count += 1
+        logger.info(f"Created {emails_count} emails")
         
+        logger.info("Database initialization completed successfully")
         return {"message": "Database initialized with sample data"}
     except Exception as e:
+        logger.error(f"Failed to initialize database: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to initialize database: {str(e)}")
+
+from fastapi import Query
+import os
+
+@api_router.get("/logs", tags=["admin"])
+async def view_logs(n: int = Query(5, description="Number of log entries to retrieve")):
+    try:
+        with open('app.log', 'r') as log_file:
+            lines = log_file.readlines()
+            return {"logs": lines[-n:]}
+    except Exception as e:
+        logger.error(f"Failed to retrieve logs: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve logs: {str(e)}")
+
+@api_router.post("/reset-logs", tags=["admin"])
+async def reset_logs():
+    try:
+        open('app.log', 'w').close()
+        logger.info("Logs have been reset")
+        return {"message": "Logs have been reset"}
+    except Exception as e:
+        logger.error(f"Failed to reset logs: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to reset logs: {str(e)}")
 
 # Add more routers for other endpoints
