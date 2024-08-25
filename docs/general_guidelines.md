@@ -17,8 +17,10 @@
 - Use type hints in function signatures and variable declarations.
 
 ## Configuration
-- Use a `config.py` file with a `Settings` class for application configuration.
+- Use the `config.py` file with the `Settings` class (based on Pydantic's BaseSettings) for application configuration.
 - Utilize environment variables for sensitive information and deployment-specific settings.
+- Use a .env file for local development and ensure it's not committed to version control.
+- Access configuration values through the `settings` instance imported from `config.py`.
 
 ## Security
 - Use parameterized queries to prevent injection attacks.

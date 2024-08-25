@@ -6,6 +6,13 @@
 - Implement proper input validation using Pydantic models.
 - Use async functions for database operations and external API calls.
 - Implement proper error handling and use FastAPI's HTTPException for API errors.
+- Use dependency injection for shared resources (e.g., database connections, settings).
+- Utilize the `settings` object from `config.py` for accessing configuration values.
+
+## Environment Variables
+- Use the `python-dotenv` library to load environment variables from a .env file in development.
+- In production, set environment variables according to the deployment platform's best practices.
+- Never commit the .env file to version control; use .env.example as a template.
 
 ## Database (MongoDB with MongoEngine)
 - Define document models in separate files under the `models/` directory.
