@@ -14,10 +14,10 @@ class UserCreate(BaseModel):
     password: str
 
 class UserUpdate(BaseModel):
-    email: EmailStr = None
-    username: str = None
-    first_name: str = None
-    last_name: str = None
+    email: EmailStr | None = None
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
 
 class UserResponse(BaseModel):
     user_id: str
@@ -48,25 +48,12 @@ async def read_user(user_id: str):
     user = User.objects(user_id=user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return UserResponse(
-        user_id=str(user.user_id),
-        email=user.email,
-        username=user.username,
-        first_name=user.first_name,
-        last_name=user.last_name
-    )
+    return UserResponse.from_mongo(user)
 
 @router.get("/", response_model=List[UserResponse])
 async def read_users():
     users = User.objects()
-    return [UserResponse(
-        user_id=str(user.user_id),
-        email=user.email,
-        username=user.username,
-        first_name=user.first_name if hasattr(user, 'first_name') else "",
-        last_name=user.last_name if hasattr(user, 'last_name') else "",
-        is_active=user.is_active
-    ) for user in users]
+    return [UserResponse.from_mongo(user) for user in users]
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(user_id: str, user: UserUpdate):
@@ -76,18 +63,10 @@ async def update_user(user_id: str, user: UserUpdate):
     
     update_data = user.dict(exclude_unset=True)
     for key, value in update_data.items():
-        if hasattr(db_user, key):
-            setattr(db_user, key, value)
+        setattr(db_user, key, value)
     
     db_user.save()
-    return UserResponse(
-        user_id=str(db_user.user_id),
-        email=db_user.email,
-        username=db_user.username,
-        first_name=db_user.first_name if hasattr(db_user, 'first_name') else "",
-        last_name=db_user.last_name if hasattr(db_user, 'last_name') else "",
-        is_active=db_user.is_active
-    )
+    return UserResponse.from_mongo(db_user)
 
 @router.delete("/{user_id}", response_model=dict)
 async def delete_user(user_id: str):
