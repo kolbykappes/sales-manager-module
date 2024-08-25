@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     SAMPLE_DATA_FILE: str = os.getenv("SAMPLE_DATA_FILE", "sample_data.json")
     
     # AI model settings
-    DEFAULT_AI_MODEL: str = os.getenv("DEFAULT_AI_MODEL", "openrouter/anthropic/claude-3-sonnet-20240229")
+    DEFAULT_AI_MODEL: str = os.getenv("DEFAULT_AI_MODEL", "openrouter/anthropic/claude-3.5-sonnet")
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY")
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY")
