@@ -13,7 +13,6 @@ class Email(Document):
     tokens_sent = IntField(required=True)
     tokens_returned = IntField(required=True)
     generation_time = FloatField(required=True)
-    campaign_id = StringField(required=True)
     full_prompt = StringField(required=True)
     created_at = DateTimeField(default=datetime.utcnow)
 
@@ -28,7 +27,6 @@ class EmailCreate(BaseModel):
     tokens_sent: int
     tokens_returned: int
     generation_time: float
-    campaign_id: str
     full_prompt: str
 
 class EmailResponse(BaseModel):
@@ -41,7 +39,6 @@ class EmailResponse(BaseModel):
     tokens_sent: int
     tokens_returned: int
     generation_time: float
-    campaign_id: int
     full_prompt: str
     created_at: datetime
 
@@ -66,7 +63,6 @@ class EmailResponse(BaseModel):
             tokens_sent=email.tokens_sent,
             tokens_returned=email.tokens_returned,
             generation_time=email.generation_time,
-            campaign_id=email.campaign_id,
             full_prompt=email.full_prompt,
             created_at=email.created_at
         )
@@ -75,3 +71,4 @@ class EmailUpdate(BaseModel):
     subject: str | None = None
     body: str | None = None
     ai_model: str | None = None
+    campaign_id = StringField(required=True)  
