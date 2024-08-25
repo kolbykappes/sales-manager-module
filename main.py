@@ -34,8 +34,7 @@ try:
 
     # Check if 'companies' collection exists
     if 'companies' not in collections:
-        logger.error("The 'companies' collection does not exist in the database.")
-        raise HTTPException(status_code=500, detail="Failed to initialize database: 'companies'")
+        logger.warning("The 'companies' collection does not exist in the database. You may need to initialize the database.")
 
 except ConnectionFailure as e:
     logger.error(f"Failed to connect to MongoDB: {str(e)}")
