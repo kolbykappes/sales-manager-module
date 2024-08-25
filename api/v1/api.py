@@ -40,7 +40,8 @@ async def initialize_db():
             user = User(
                 email=user_data['email'],
                 full_name=user_data['full_name'],
-                is_active=user_data['is_active']
+                is_active=user_data['is_active'],
+                username=user_data['email'].split('@')[0]  # Using email prefix as username
             )
             user.set_password(user_data['password'])
             user.save()

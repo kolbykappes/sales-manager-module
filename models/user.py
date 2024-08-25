@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField
+from mongoengine import Document, StringField, DateTimeField, BooleanField
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -6,9 +6,9 @@ class User(Document):
     email = StringField(required=True, unique=True)
     user_id = StringField(primary_key=True, default=lambda: str(uuid.uuid4()))
     username = StringField(required=True, unique=True)
-    first_name = StringField(required=True)
-    last_name = StringField(required=True)
+    full_name = StringField(required=True)
     password_hash = StringField(required=True)
+    is_active = BooleanField(default=True)
     last_login = DateTimeField()
 
     meta = {'collection': 'users'}
