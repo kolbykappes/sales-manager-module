@@ -9,3 +9,6 @@ python-multipart
 pymongo
 mongoengine
 python-dotenv
+pytest
+httpx
+mongomock
