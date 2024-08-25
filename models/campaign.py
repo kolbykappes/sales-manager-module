@@ -43,6 +43,12 @@ class CampaignResponse(BaseModel):
         }
     )
 
+class CampaignUpdate(BaseModel):
+    campaign_name: str | None = Field(None, max_length=200)
+    campaign_context: str | None = None
+    campaign_template_body: str | None = None
+    campaign_template_title: str | None = Field(None, max_length=200)
+
     @classmethod
     def from_mongo(cls, campaign: Campaign):
         return cls(
