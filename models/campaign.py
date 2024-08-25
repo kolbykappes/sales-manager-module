@@ -35,3 +35,16 @@ class CampaignResponse(BaseModel):
     user: str  # This will be the user_id
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    @classmethod
+    def from_mongo(cls, campaign: Campaign):
+        return cls(
+            campaign_id=str(campaign.campaign_id),
+            campaign_name=campaign.campaign_name,
+            campaign_context=campaign.campaign_context,
+            campaign_template_body=campaign.campaign_template_body,
+            campaign_template_title=campaign.campaign_template_title,
+            created_at=campaign.created_at,
+            updated_at=campaign.updated_at,
+            user=str(campaign.user.id)
+        )
