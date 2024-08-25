@@ -6,6 +6,9 @@ from pydantic.config import ConfigDict
 import uuid
 
 class Campaign(Document):
+    """
+    Campaign document model for MongoDB.
+    """
     campaign_id = StringField(primary_key=True, default=lambda: str(uuid.uuid4()))
     campaign_name = StringField(required=True, max_length=200)
     campaign_context = StringField(required=True)
@@ -18,6 +21,9 @@ class Campaign(Document):
     meta = {'collection': 'campaigns'}
 
 class CampaignCreate(BaseModel):
+    """
+    Pydantic model for campaign creation.
+    """
     campaign_name: str = Field(..., max_length=200)
     campaign_context: str
     campaign_template_body: str
@@ -25,6 +31,9 @@ class CampaignCreate(BaseModel):
     user: str  # This will be the user_id
 
 class CampaignResponse(BaseModel):
+    """
+    Pydantic model for campaign response.
+    """
     campaign_id: str
     campaign_name: str
     campaign_context: str
@@ -43,14 +52,17 @@ class CampaignResponse(BaseModel):
         }
     )
 
-class CampaignUpdate(BaseModel):
-    campaign_name: str | None = Field(None, max_length=200)
-    campaign_context: str | None = None
-    campaign_template_body: str | None = None
-    campaign_template_title: str | None = Field(None, max_length=200)
-
     @classmethod
-    def from_mongo(cls, campaign: Campaign):
+    def from_mongo(cls, campaign: Campaign) -> 'CampaignResponse':
+        """
+        Create a CampaignResponse instance from a Campaign document.
+        
+        Args:
+            campaign (Campaign): The Campaign document to convert.
+        
+        Returns:
+            CampaignResponse: The created CampaignResponse instance.
+        """
         return cls(
             campaign_id=str(campaign.campaign_id),
             campaign_name=campaign.campaign_name,
@@ -61,3 +73,12 @@ class CampaignUpdate(BaseModel):
             updated_at=campaign.updated_at,
             user=str(campaign.user.id)
         )
+
+class CampaignUpdate(BaseModel):
+    """
+    Pydantic model for campaign update.
+    """
+    campaign_name: str | None = Field(None, max_length=200)
+    campaign_context: str | None = None
+    campaign_template_body: str | None = None
+    campaign_template_title: str | None = Field(None, max_length=200)

@@ -4,6 +4,9 @@ from pydantic import BaseModel, Field
 from pydantic.config import ConfigDict
 
 class Company(Document):
+    """
+    Company document model for MongoDB.
+    """
     name = StringField(required=True)
     website = StringField()
     primary_industry = StringField()
@@ -14,6 +17,9 @@ class Company(Document):
     meta = {'collection': 'companies'}
 
 class CompanyCreate(BaseModel):
+    """
+    Pydantic model for company creation.
+    """
     name: str
     website: str | None = None
     primary_industry: str | None = None
@@ -22,6 +28,9 @@ class CompanyCreate(BaseModel):
     user: str  # This will be the user_id
 
 class CompanyResponse(BaseModel):
+    """
+    Pydantic model for company response.
+    """
     id: str
     name: str
     website: str | None
@@ -37,7 +46,16 @@ class CompanyResponse(BaseModel):
     )
 
     @classmethod
-    def from_mongo(cls, company: Company):
+    def from_mongo(cls, company: Company) -> 'CompanyResponse':
+        """
+        Create a CompanyResponse instance from a Company document.
+        
+        Args:
+            company (Company): The Company document to convert.
+        
+        Returns:
+            CompanyResponse: The created CompanyResponse instance.
+        """
         return cls(
             id=str(company.id),
             name=company.name,
@@ -49,6 +67,9 @@ class CompanyResponse(BaseModel):
         )
 
 class CompanyUpdate(BaseModel):
+    """
+    Pydantic model for company update.
+    """
     name: str | None = None
     website: str | None = None
     primary_industry: str | None = None
