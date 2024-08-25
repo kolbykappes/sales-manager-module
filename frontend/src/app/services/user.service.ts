@@ -21,6 +21,7 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getUsers(): Observable<User[]> {
+    console.log('Fetching users from:', this.apiUrl);
     return this.http.get<User[]>(this.apiUrl, { withCredentials: environment.withCredentials });
   }
 }
