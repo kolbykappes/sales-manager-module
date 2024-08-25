@@ -12,16 +12,23 @@ api_router.include_router(users.router, prefix="/users", tags=["users"])
 
 @api_router.post("/reset-project", tags=["admin"])
 async def reset_project():
-    # Disconnect from the current database
-    disconnect()
-    # Reconnect to drop the database
-    connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
-    from mongoengine.connection import get_db
-    db = get_db()
-    db.client.drop_database(settings.DATABASE_NAME)
-    # Reconnect to the fresh database
-    connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
-    return {"message": "Project reset successfully"}
+    try:
+        # Disconnect from the current database
+        disconnect()
+        # Reconnect to drop the database
+        connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
+        from mongoengine.connection import get_db
+        db = get_db()
+        db.client.drop_database(settings.DATABASE_NAME)
+        # Reconnect to the fresh database
+        connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
+        return {
+            "message": "Project reset successfully",
+            "database_name": settings.DATABASE_NAME,
+            "status": "Database dropped and reconnected"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to reset project: {str(e)}")
 
 @api_router.post("/initialize-db", tags=["admin"])
 async def initialize_db():
