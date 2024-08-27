@@ -1,11 +1,13 @@
-from loguru import logger
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from mongoengine import connect, DoesNotExist, get_db
 from pymongo.errors import ConnectionFailure
+from loguru import logger
 from api.v1.api import api_router
 from config import settings
+from log.extensions import configure_logger, loggable
 
+configure_logger()
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
 
@@ -20,6 +22,7 @@ app.add_middleware(
 
 
 # MongoDB connection and collection validation
+@loggable(entry=True, exit=True, level="INFO")
 def validate_collections():
     required_collections = ["users", "companies", "contacts", "campaigns", "emails"]
     missing_collections = []
@@ -28,7 +31,7 @@ def validate_collections():
         connect(db=settings.DATABASE_NAME, host=settings.MONGODB_URI)
         logger.info("Successfully connected to MongoDB")
         db = get_db()
-        logger.warning("get_db", db=db.name)
+        logger.info("get_db", database=db.name)
         existing_collections = db.list_collection_names()
         logger.info(f"Available collections: {existing_collections}")
 
